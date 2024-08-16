@@ -5,7 +5,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Xarrow, { useXarrow } from 'react-xarrows';
-// ==============================|| SAMPLE PAGE ||============================== //
+import { motion } from 'framer-motion';
 
 interface Position {
     x: number;
@@ -68,8 +68,7 @@ const SamplePage = () => {
                                 newState[itemKey] = { x: 0, y: 0 };
                                 newState[bottomKey] = { x: 0, y: -120 };
                                 newState[key] = { x: 0, y: 120 };
-                            }
-                            else if (itemKey === bottomKey) {
+                            } else if (itemKey === bottomKey) {
                                 newState[itemKey] = { x: 0, y: 0 };
                                 newState[topKey] = { x: 0, y: 120 };
                                 newState[key] = { x: 0, y: -120 };
@@ -77,8 +76,7 @@ const SamplePage = () => {
                                 newState[itemKey] = { x: 0, y: 0 };
                                 newState[rightKey] = { x: -120, y: 0 };
                                 newState[key] = { x: 120, y: 0 };
-                            }
-                            else if (itemKey === rightKey) {
+                            } else if (itemKey === rightKey) {
                                 newState[itemKey] = { x: 0, y: 0 };
                                 newState[leftKey] = { x: 120, y: 0 };
                                 newState[key] = { x: -120, y: 0 };
@@ -103,14 +101,15 @@ const SamplePage = () => {
             }
 
             // Update the position of the dragged item if no overlap
-            // newState[itemKey as keyof PosState] = newPos;
+            //newState[itemKey as keyof PosState] = newPos;
             return newState;
         });
-        setTimeout(updateXarrow, 0);
+        // setTimeout(updateXarrow, 0);
     };
     return (
         <MainCard title="Tree">
             <Container
+                id="draggable"
                 maxWidth={false}
                 sx={{
                     height: '50vh',
@@ -121,141 +120,33 @@ const SamplePage = () => {
                     position: 'relative'
                 }}
             >
-                <Draggable
-                    onDrag={updateXarrow}
-                    bounds="parent"
-                    position={posi.item1}
-                    onStop={(e, data) => {
-                        handleDragStop('item1', e, data);
-                    }}
-                >
-                    <Grid
-                        container
-                        id="item1"
-                        sx={{
-                            width: '50px',
-                            height: '50px',
-                            bgcolor: 'lightblue',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '100%',
-                            position: 'absolute'
-                        }}
+                {Object.keys(posi).map((key) => (
+                    <Draggable
+                        bounds="#draggable"
+                        key={key}
+                        onStop={(e, data) => handleDragStop(key as keyof PosState, e, data)}
+                        position={posi[key as keyof PosState]}
                     >
-                        <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                            <span>1</span>
-                        </Grid>
-                    </Grid>
-                </Draggable>
-                <Draggable
-                    onDrag={updateXarrow}
-                    bounds="parent"
-                    position={posi.item2}
-                    onStop={(e, data) => {
-                        handleDragStop('item2', e, data);
-                    }}
-                >
-                    <Grid
-                        container
-                        id="item2"
-                        sx={{
-                            width: '50px',
-                            height: '50px',
-                            bgcolor: 'lightblue',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '100%',
-                            position: 'absolute'
-                        }}
-                    >
-                        <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                            <span>2</span>
-                        </Grid>
-                    </Grid>
-                </Draggable>
-                <Draggable
-                    onDrag={updateXarrow}
-                    bounds="parent"
-                    position={posi.item3}
-                    onStop={(e, data) => {
-                        handleDragStop('item3', e, data);
-                    }}
-                >
-                    <Grid
-                        container
-                        id="item3"
-                        sx={{
-                            width: '50px',
-                            height: '50px',
-                            bgcolor: 'lightblue',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '100%',
-                            position: 'absolute'
-                        }}
-                    >
-                        <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                            <span>3</span>
-                        </Grid>
-                    </Grid>
-                </Draggable>
-                <Draggable
-                    onDrag={updateXarrow}
-                    bounds="parent"
-                    position={posi.item4}
-                    onStop={(e, data) => {
-                        handleDragStop('item4', e, data);
-                    }}
-                >
-                    <Grid
-                        container
-                        id="item4"
-                        sx={{
-                            width: '50px',
-                            height: '50px',
-                            bgcolor: 'lightblue',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '100%',
-                            position: 'absolute'
-                        }}
-                    >
-                        <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                            <span>4</span>
-                        </Grid>
-                    </Grid>
-                </Draggable>
-                <Draggable
-                    onDrag={updateXarrow}
-                    bounds="parent"
-                    position={posi.item5}
-                    onStop={(e, data) => {
-                        handleDragStop('item5', e, data);
-                    }}
-                >
-                    <Grid
-                        container
-                        id="item5"
-                        sx={{
-                            width: '50px',
-                            height: '50px',
-                            bgcolor: 'lightblue',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '100%',
-                            position: 'absolute'
-                        }}
-                    >
-                        <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                            <span>5</span>
-                        </Grid>
-                    </Grid>
-                </Draggable>
+                        <motion.div
+                            id={key}
+                            animate={{ x: posi[key as keyof PosState].x, y: posi[key as keyof PosState].y }}
+                            transition={{ duration: 0.3, type: 'spring', stiffness: 400, damping: 25 }}
+                            onUpdate={() => updateXarrow()}
+                            style={{
+                                width: '50px',
+                                height: '50px',
+                                backgroundColor: 'lightblue',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '100%',
+                                position: 'absolute'
+                            }}
+                        >
+                            <span>{key.replace('item', '')}</span>
+                        </motion.div>
+                    </Draggable>
+                ))}
                 <Xarrow showHead={false} start={centerItem} end="item1" />
                 <Xarrow showHead={false} start={centerItem} end="item2" />
                 <Xarrow showHead={false} start={centerItem} end="item3" />
@@ -275,7 +166,7 @@ const SamplePage = () => {
                     }
                 }}
             >
-                <Typography variant="h4">Center item : {centerItem}</Typography>
+                <Typography variant="h4">Center item: {centerItem}</Typography>
             </Container>
         </MainCard>
     );
