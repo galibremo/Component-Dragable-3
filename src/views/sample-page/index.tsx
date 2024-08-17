@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Xarrow, { useXarrow } from 'react-xarrows';
-import { motion } from 'framer-motion';
-import useWindowSize from '../../hooks/useWindowSize'; // Import the custom hook
+import useWindowSize from '../../hooks/useWindowSize';
+import { useRef } from 'react';
+import Box from '@mui/material/Box';
 
 interface Position {
     x: number;
@@ -23,8 +24,9 @@ interface PosState {
 const SamplePage = () => {
     const { width } = useWindowSize();
     const updateXarrow = useXarrow();
+    const parentRef = useRef(null);
 
-    const offset = width < 600 ? 100 : 150; 
+    const offset = width < 600 ? 100 : 150;
 
     const getInitialPositions = () => ({
         item1: { x: 0, y: -offset },
@@ -36,12 +38,22 @@ const SamplePage = () => {
 
     const [posi, setPosi] = useState<PosState>(getInitialPositions);
     const [centerItem, setCenterItem] = useState<keyof PosState>('item3');
+    const [dragging, setDragging] = useState(false);
+
+    useEffect(() => {
+        updateXarrow(); // Update Xarrow after each position update
+    }, [posi, centerItem, updateXarrow]);
 
     useEffect(() => {
         setPosi(getInitialPositions);
     }, [width]);
 
+    const handleDragStart = () => {
+        setDragging(true);
+    };
+
     const handleDragStop = (itemKey: keyof PosState, e: DraggableEvent, data: DraggableData) => {
+        setDragging(false);
         const newPos = { x: data.x, y: data.y };
 
         setPosi((prevState) => {
@@ -53,7 +65,7 @@ const SamplePage = () => {
                     const distX = Math.abs(item.x - newPos.x);
                     const distY = Math.abs(item.y - newPos.y);
 
-                    if (distX <= offset / 2 && distY <= offset / 2) {
+                    if (distX <= 60 && distY <= 60) {
                         if (key === centerItem) {
                             setCenterItem(itemKey);
                             const topKey = Object.keys(prevState).find(
@@ -103,16 +115,17 @@ const SamplePage = () => {
                     }
                 }
             }
-
+            //newState[itemKey as keyof PosState] = newPos;
+            updateXarrow();
             return newState;
         });
-        // setTimeout(updateXarrow, 0);
+        setTimeout(updateXarrow, 0);
     };
 
     return (
         <MainCard title="Tree">
             <Container
-                id="draggable"
+                ref={parentRef}
                 maxWidth={false}
                 sx={{
                     height: '50vh',
@@ -125,17 +138,15 @@ const SamplePage = () => {
             >
                 {Object.keys(posi).map((key) => (
                     <Draggable
-                        bounds="#draggable"
                         key={key}
+                        onDrag={updateXarrow}
+                        onStart={handleDragStart}
                         onStop={(e, data) => handleDragStop(key as keyof PosState, e, data)}
                         position={posi[key as keyof PosState]}
                     >
-                        <motion.div
+                        <Box
                             id={key}
-                            animate={{ x: posi[key as keyof PosState].x, y: posi[key as keyof PosState].y }}
-                            transition={{ duration: 0.3, type: 'spring', stiffness: 400, damping: 25 }}
-                            onUpdate={() => updateXarrow()}
-                            style={{
+                            sx={{
                                 width: '50px',
                                 height: '50px',
                                 backgroundColor: 'lightblue',
@@ -143,11 +154,12 @@ const SamplePage = () => {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 borderRadius: '100%',
-                                position: 'absolute'
+                                position: 'absolute',
+                                transition: dragging ? 'none' : 'all 0.4s ease'
                             }}
                         >
                             <span>{key.replace('item', '')}</span>
-                        </motion.div>
+                        </Box>
                     </Draggable>
                 ))}
                 <Xarrow showHead={false} start={centerItem} end="item1" />
@@ -174,4 +186,5 @@ const SamplePage = () => {
         </MainCard>
     );
 };
+
 export default SamplePage;
